@@ -1,0 +1,26 @@
+# Data
+data/raw/
+data/final/
+data/interim/
+*.dta
+*.sav
+*.csv
+
+# Stata
+*.log
+*.smcl
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.out
+*.toc
+*.gz
+*.synctex*
+*.fls
+*.fdb_latexmk
+paper/paper.pdf
+
+# System/Editor
+.DS_Store
