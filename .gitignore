@@ -1,26 +1,42 @@
-# Data
-data/raw/
-data/final/
-data/interim/
-*.dta
-*.sav
-*.csv
-
-# Stata
+# --- Stata ---
 *.log
 *.smcl
+*.dta
+*.gph
 
-# LaTeX build artifacts
+# --- Output ---
+output/tables/*
+output/figures/*
+output/logs/*
+
+# But keep empty folders
+!output/tables/.gitkeep
+!output/figures/.gitkeep
+!output/logs/.gitkeep
+
+# --- LaTeX ---
 *.aux
 *.bbl
 *.blg
-*.out
+*.synctex.gz
 *.toc
-*.gz
-*.synctex*
-*.fls
+*.out
 *.fdb_latexmk
-paper/paper.pdf
+*.fls
 
-# System/Editor
+# --- OS / Editor junk ---
 .DS_Store
+Thumbs.db
+*.tmp
+*.swp
+*.bak
+
+# --- RStudio / Quarto (if ever added) ---
+.Rproj.user/
+*.Rhistory
+*.RData
+*.Rproj
+
+# --- Python cache ---
+__pycache__/
+*.pyc

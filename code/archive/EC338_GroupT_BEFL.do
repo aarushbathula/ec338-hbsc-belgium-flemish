@@ -1,20 +1,21 @@
-*******************************************************
-* 03_tables_figs.do
-* EC338 – Export LaTeX tables and replication outputs
-*******************************************************
+****************************************************
+* EC338 Microeconometrics Assignment 1
+* Group T - Aarush Bathula, Edward Chamberlain, Jamie Chan, Will Murphy
+* Last Updated: 17 November 2025 11:31 - Aarush
+****************************************************
 
-version 18
 clear all
 set more off
 set varabbrev off
 
-* If running via master.do, PROJ is already defined.
-* If running standalone, set PROJ here:
-capture confirm global PROJ
-if _rc {
-    global PROJ "/Users/aarushbathula/Developer/ec338-hbsc-belgium-flemish"
-}
+* We use estout quite extensively for tables, so please uncomment the below line if estout is not already installed on your machine.
 
+* ssc install estout, replace 
+
+* 0. Project paths
+*---------------------------------------------------
+
+global PROJ   "/Users/Aarushbathula/Developer/ec338-hbsc-belgium-flemish"
 cd "$PROJ"
 
 global RAW    "$PROJ/data/raw"
@@ -23,18 +24,267 @@ global FINAL  "$PROJ/data/final"
 global LOGS   "$PROJ/output/logs"
 global TABLES "$PROJ/output/tables"
 
-foreach dir in LOGS TABLES {
+foreach dir in INT FINAL LOGS TABLES {
     capture mkdir "$`dir'"
 }
 
-* We use estout quite extensively for tables:
-* ssc install estout, replace
-
 capture log close
-log using "$LOGS/EC338_GroupT_tables.log", replace text
+log using "$LOGS/EC338_Group_T.log", replace text
 
-* Load final analytic dataset built in 01_data_build.do
-use "$FINAL/hbsc_pooled_BEFL_final.dta", clear
+* 1. Parameters
+*---------------------------------------------------
+local COUNTRY_CODE = 56001
+local f2006 "HBSC2006OAed1.0_F1.dta"
+local f2010 "HBSC2010OAed1.0_F4.dta"
+local f2014 "HBSC2014OAed1.1_F1.dta"
+
+* 2. Pre-flight: confirm raw files exist
+*---------------------------------------------------
+foreach f in `f2006' `f2010' `f2014' {
+    capture confirm file "$RAW/`f'"
+    if _rc {
+        di as error "Missing raw file: $RAW/`f'"
+        log close
+        exit 601
+    }
+}
+di as result "All raw files present."
+
+* 3. Housekeeping
+*---------------------------------------------------
+capture noisily {
+    cap erase "$INT/hbsc2006_BEFL_clean.dta"
+    cap erase "$INT/hbsc2010_BEFL_clean.dta"
+    cap erase "$INT/hbsc2014_BEFL_clean.dta"
+    cap erase "$FINAL/hbsc_pooled_BEFL_full.dta"
+}
+
+* 4. Build wave-specific datasets
+*---------------------------------------------------
+
+* 4.1 2006
+use "$RAW/`f2006'", clear
+gen wave = 2006
+capture rename countryno     country
+capture rename schoolno      school
+capture rename classno       class
+capture rename uniqueid      pid
+capture rename sampleweights weight
+capture rename subregion     stratum
+keep if country == `COUNTRY_CODE'
+save "$INT/hbsc2006_BEFL_clean.dta", replace
+di as txt "2006: " _N " obs"
+
+* 4.2 2010
+use "$RAW/`f2010'", clear
+gen wave = 2010
+capture rename countryno     country
+capture rename schoolno      school
+capture rename classno       class
+capture rename uniqueid      pid
+capture rename sampleweights weight
+capture rename subregion     stratum
+keep if country == `COUNTRY_CODE'
+save "$INT/hbsc2010_BEFL_clean.dta", replace
+di as txt "2010: " _N " obs"
+
+* 4.3 2014
+use "$RAW/`f2014'", clear
+gen wave = 2014
+capture rename COUNTRYno country
+capture rename id2       school
+capture rename id3       class
+capture rename UniqueID  pid
+capture rename M137      weight
+capture rename REG_NO    stratum
+capture rename AGECAT    agecat
+capture rename AGE       age
+keep if country == `COUNTRY_CODE'
+save "$INT/hbsc2014_BEFL_clean.dta", replace
+di as txt "2014: " _N " obs"
+
+* 5. Append waves and keep relevant variables
+*---------------------------------------------------
+use "$INT/hbsc2006_BEFL_clean.dta", clear
+append using "$INT/hbsc2010_BEFL_clean.dta" "$INT/hbsc2014_BEFL_clean.dta"
+
+levelsof wave, local(W)
+assert "`W'" == "2006 2010 2014"
+
+local famhome motherhome1 fatherhome1 stepmohome1 stepfahome1 grandmohome1 ///
+              grandfahome1 fosterhome1 elsehome1 ///
+              havehome2 stayhome2 motherhome2 fatherhome2 stepmohome2 ///
+              stepfahome2 grandmohome2 grandfahome2 fosterhome2 elsehome2 ///
+              brothershome1 brothershome2 sistershome1 sistershome2
+
+local core age agecat school sex wave acachieve welloff m134 m135 teachertust
+local tech pid weight stratum
+
+keep `core' `famhome' `tech'
+order wave school sex age agecat acachieve welloff m134 m135 `famhome' pid
+di as txt "After restriction: " _N " obs"
+
+* 6. Construct sibling variables
+*---------------------------------------------------
+
+* 6.1 Sibling counts: destring + missing -> 0
+foreach v of varlist brothershome1 brothershome2 sistershome1 sistershome2 {
+    capture confirm variable `v'
+    if !_rc {
+        destring `v', replace
+        replace `v' = . if inlist(`v', 9, 99)
+        replace `v' = 0 if missing(`v')
+    }
+}
+
+* 6.2 Total siblings and counts
+capture drop siblingsum boysibs girlsibs single_sib
+gen siblingsum = brothershome1 + brothershome2 + sistershome1 + sistershome2
+gen boysibs    = brothershome1 + brothershome2
+gen girlsibs   = sistershome1  + sistershome2
+gen byte single_sib = (siblingsum == 1)
+
+label var siblingsum "Total siblings in household(s)"
+label var boysibs    "Number of brothers in household(s)"
+label var girlsibs   "Number of sisters in household(s)"
+label var single_sib "Exactly one sibling"
+
+* 7. Construct outcome and treatment variables
+*---------------------------------------------------
+
+* 7.1 Reverse-coded achievement
+capture drop acachieve_rev
+gen acachieve_rev = 5 - acachieve if inrange(acachieve, 1, 4)
+label define ac_rev 1 "Below average" 2 "Average" 3 "Good" 4 "Very good"
+label values acachieve_rev ac_rev
+label var acachieve_rev "Perceived academic achievement (higher = better)"
+
+* 7.2 Same-sex sibling indicator (works for all family sizes)
+capture drop same_sex
+gen byte same_sex = .
+
+* Boys: same_sex = 1 if at least one brother
+replace same_sex = 1 if sex == 1 & boysibs  >= 1 & siblingsum >= 1
+
+* Girls: same_sex = 1 if at least one sister
+replace same_sex = 1 if sex == 2 & girlsibs >= 1 & siblingsum >= 1
+
+* Boys with siblings but no brothers -> only opposite-sex siblings
+replace same_sex = 0 if sex == 1 & boysibs  == 0 & siblingsum >= 1
+
+* Girls with siblings but no sisters -> only opposite-sex siblings
+replace same_sex = 0 if sex == 2 & girlsibs == 0 & siblingsum >= 1
+
+label define samesex 0 "Only opposite-sex siblings" 1 "Has same-sex sibling(s)"
+label values same_sex samesex
+label var same_sex "Has at least one same-sex sibling"
+
+* Verify same_sex is defined for all families with siblings
+assert !missing(same_sex) if siblingsum >= 1
+
+* 7.3 Composition variables for multi-sibling analysis
+capture drop both_bro_sis boy_both_sib girl_both_sib only_same_sex
+
+* Mixed-sibling families (both brothers and sisters)
+gen byte both_bro_sis = (boysibs >= 1 & girlsibs >= 1)
+label var both_bro_sis "Has both brother(s) and sister(s)"
+
+* Child-sex-specific mixed composition
+gen byte boy_both_sib  = (sex == 1) & (both_bro_sis == 1)
+gen byte girl_both_sib = (sex == 2) & (both_bro_sis == 1)
+
+* Only same-sex siblings (all siblings same sex as child)
+gen byte only_same_sex = .
+
+* Boys: at least one brother and no sisters
+replace only_same_sex = 1 if sex == 1 & boysibs  >= 1 & girlsibs == 0 & siblingsum >= 1
+
+* Girls: at least one sister and no brothers
+replace only_same_sex = 1 if sex == 2 & girlsibs >= 1 & boysibs  == 0 & siblingsum >= 1
+
+* Everyone else with siblings -> not only same-sex
+replace only_same_sex = 0 if siblingsum >= 1 & missing(only_same_sex)
+
+label var boy_both_sib  "Boy with both brother(s) and sister(s)"
+label var girl_both_sib "Girl with both brother(s) and sister(s)"
+label var only_same_sex "All siblings same sex as child"
+
+* Verify composition variables are mutually exclusive
+gen comp_check = boy_both_sib + girl_both_sib + only_same_sex
+assert comp_check <= 1 if siblingsum >= 1
+drop comp_check
+
+* 7.4 Recode agecat 1/2/3 -> 11/13/15
+recode agecat (1 = 11) (2 = 13) (3 = 15), gen(agecat_new)
+drop agecat
+rename agecat_new agecat
+label define agecat_l 11 "Age group ~11.5" 13 "Age group ~13.5" 15 "Age group ~15.5"
+label values agecat agecat_l
+
+* 8. Immigrant origin and teacher trust (2014 only)
+*---------------------------------------------------
+
+* 8.1 Immigrant origin (>= 1 parent foreign-born)
+capture drop immigrant_origin
+gen immigrant_origin = .
+
+* At least one parent foreign-born (m134 or m135 between 2-6)
+replace immigrant_origin = 1 if (inrange(m134, 2, 6)) | (inrange(m135, 2, 6))
+
+* Both parents native (both == 1)
+replace immigrant_origin = 0 if m134 == 1 & m135 == 1
+
+label define imm_lab 0 "Native" 1 "Immigrant origin"
+label values immigrant_origin imm_lab
+label var immigrant_origin "Immigrant origin (≥1 parent foreign-born)"
+
+* Diagnostic check
+di as txt _n "Immigrant origin distribution (2014 wave):"
+tab immigrant_origin if wave == 2014, missing
+
+* 8.2 Teacher trust (2014 only, recode to 3 levels)
+capture drop teacher_trust3
+recode teachertust (1 2 = 1) (3 = 2) (4 5 = 3) if wave == 2014, gen(teacher_trust3)
+
+label define tt3 1 "Low trust" 2 "Medium trust" 3 "High trust"
+label values teacher_trust3 tt3
+label var teacher_trust3 "Teacher trust (3-level)"
+
+* 9. Define samples
+*---------------------------------------------------
+
+* Drop only-children (no siblings)
+drop if siblingsum == 0
+
+* Single-sibling sample (main sample for causality)
+gen sample_main_single = (siblingsum == 1) ///
+    & inlist(agecat, 11, 13, 15) ///
+    & !missing(acachieve_rev, sex, same_sex, welloff)
+
+* Full sample (all families with ≥1 sibling)
+gen sample_main_full = (siblingsum >= 1) ///
+    & inlist(agecat, 11, 13, 15) ///
+    & !missing(acachieve_rev, sex, same_sex, welloff)
+
+* Multi-sibling only (optional sensitivity analysis)
+gen sample_multi_only = (siblingsum >= 2) ///
+    & inlist(agecat, 11, 13, 15) ///
+    & !missing(acachieve_rev, sex, same_sex, welloff, boy_both_sib, girl_both_sib, only_same_sex)
+
+* Print sample sizes
+count if sample_main_single
+di as txt "Single-sibling sample: " r(N)
+
+count if sample_main_full
+di as txt "Full sample (all siblings): " r(N)
+
+count if sample_multi_only
+di as txt "Multi-sibling only sample: " r(N)
+
+* 10. Save final dataset
+*---------------------------------------------------
+save "$FINAL/hbsc_pooled_BEFL_final.dta", replace
+di as result "Final dataset saved: $FINAL/hbsc_pooled_BEFL_final.dta (" _N " obs)"
 
 * 11-14. Tables and analysis
 *---------------------------------------------------
@@ -53,6 +303,7 @@ label var only_same_sex "Only same-sex siblings"
 label var agecat        "Age (years, 11/13/15 groups)" 
 
 * Create female dummy for cleaner table presentation
+* (Note: Results identical to using i.sex due to re-parameterization)
 capture drop female
 gen female = (sex == 2) if !missing(sex)
 label var female "Female"
@@ -68,6 +319,7 @@ local reg_opts "star(* 0.10 ** 0.05 *** 0.01) se(3) b(3) nobase"
 di as result _n "=== TABLE 1: DESCRIPTIVE STATISTICS (PANELS A & B) ===" _n
 
 * Variables to show in descriptives
+* (Outcome, treatment, key predetermined controls)
 local descvars acachieve_rev same_sex female agecat welloff ///
                motherhome1 fatherhome1 siblingsum
  
@@ -101,10 +353,12 @@ count if sample_main_single & same_sex == 0
 local N1_os  = r(N)
 
 * 2. Composition flags for multi-sibling sample
+*    (only_same_sex already defined earlier)
 capture drop mixed
 gen byte mixed = (boy_both_sib == 1 | girl_both_sib == 1) if sample_multi_only
 
 * Only opposite-sex siblings in multi-sibling sample:
+* no same-sex sibs and not mixed
 capture drop only_opp
 gen byte only_opp = (same_sex == 0 & mixed == 0) if sample_multi_only
 
@@ -181,7 +435,8 @@ file close t1
 	
 
 * Table 2: Covariates Balance Test
-*---------------------------------------------------
+**---------------------------------------------------
+
 
 quietly regress same_sex female i.agecat i.wave i.welloff ///
     if sample_main_single, vce(cluster school)
@@ -203,10 +458,14 @@ local N_ss = r(N)
 count if sample_main_single & same_sex == 0
 local N_os = r(N)
 
+* Predetermined controls used in baseline regression / balance table
+* (add/remove variables here if your baseline spec has more/less)
 local balvars female age welloff motherhome1 fatherhome1
 
+* t-tests of equality of means, by same_sex (0 = opp-sex, 1 = same-sex)
 eststo clear
 estpost ttest `balvars' if sample_main_single, by(same_sex)
+
 
 esttab using "$TABLES/table2_balance.tex", replace ///
     cells("mu_2(fmt(2)) mu_1(fmt(2)) b(fmt(2)) se(par fmt(2))") ///
@@ -266,7 +525,7 @@ esttab m1 m2 m3 m4 using "$TABLES/table3_main_results.tex", ///
              "All models use survey weights and cluster standard errors at the school level.")
 			 
 * Table 4: Marginal Effects
-*---------------------------------------------------
+*===============================================================
 
 di as result _n "=== TABLE 4: MARGINAL EFFECTS ===" _n
 eststo clear
@@ -411,13 +670,16 @@ esttab w1 w2 w3 using "$TABLES/table7_wave2014.tex", ///
 di as result _n "=== COMPOSITION BY AGE ===" _n
 eststo clear
 
+* Run model and STORE it as ca1
 eststo ca1: qui oprobit acachieve_rev c.boy_both_sib##i.agecat ///
     c.girl_both_sib##i.agecat only_same_sex ///
     i.female i.wave i.welloff [pw=weight] if sample_multi_only, vce(cluster school)
 
+* Add fit stats safely
 capture estadd scalar ll   = e(ll)
 capture estadd scalar r2_p = e(r2_p)
 
+* Now export
 esttab ca1 using "$TABLES/table8_comp_age.tex", ///
     replace `esttab_opts' `reg_opts' ///
     keep(boy_both_sib girl_both_sib ///
@@ -431,7 +693,7 @@ esttab ca1 using "$TABLES/table8_comp_age.tex", ///
              "Standard errors clustered at school level.")	 
 
 			 
-* Table 9: 2014 Full Sample Robustness
+* Table 9: 2014 Full Samnple Robustness
 *---------------------------------------------------
 
 di as result _n "=== 2014 FULL SAMPLE ===" _n
@@ -457,14 +719,11 @@ esttab r1 r2 using "$TABLES/table9_2014_full.tex", ///
              "Results subject to composition bias from parental fertility decisions." ///
              "Main analysis (Table \ref{tab:wave2014}) uses single-sibling sample." ///
              "Controls: child sex, age, family affluence. SE clustered at school.")
-
-* List generated tables (optional)
+			 
+* List generated tables
 capture {
     ! ls -lh "$TABLES"/table*.tex
+    ! ls -lh "$TABLES"/appendix*.tex
 }
 
 log close
-
-*******************************************************
-* End 03_tables_figs.do
-*******************************************************
