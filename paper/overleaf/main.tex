@@ -1,0 +1,435 @@
+
+\documentclass[12pt]{article}
+\linespread{1.5}
+\usepackage[none]{hyphenat}
+\usepackage{wrapfig}
+\usepackage{graphicx} % Required for inserting images
+\setlength\parindent{0pt}
+\usepackage[left=2.5cm,right=2.5cm, top =2.5cm, bottom = 2.5cm]{geometry}
+\setlength{\intextsep}{18pt}
+\setlength{\textfloatsep}{18pt}
+\usepackage{siunitx}
+\usepackage{amsmath}  % in the preamble
+\usepackage{booktabs, float, pdflscape}
+
+
+\begin{document} 
+%\the\intextsep
+\begin{center}
+    \begin{large}
+        \textbf{How does sibling gender affect children’s academic performance: Data from Belgium (Flemish)} 
+        \\Group T - Aarush Bathula (5513578), Edward Chamberlain (5526786), Jamie Chan (5534070), Will Murphy (2204888)
+    \end{large} \\
+    
+We examine whether sibling gender affects academic performance amongst Flemish students using HBSC survey data from years 2006, 2010 and 2014. We study individuals with one sibling and multiple siblings separately, estimating ordered probit models of self-reported academic achievement. Across each specification, marginal effects are small and statistically insignificant. Our findings indicate that sibling gender does not impact academic performance, suggesting educational gaps likely arise from factors outside sibship gender composition.
+\end{center}
+
+\section{Introduction}
+Siblings influence children's development through role modelling, social partners and family dynamics (McHale et al., 2014). Using HBSC data within the Belgium (Flemish) region, we estimate an ordered probit model to analyse whether the gender of a sibling impacts academic performance (University of Bergen, 2006, 2010, 2014). We hypothesise that having a same-gender sibling, particularly if are older, may improve a child's performance as they might communicate and offer better support. Furthermore, siblings of the same gender may be more likely to study similar subjects and attend the same school, meaning that resources such as textbooks and tutoring can be shared between the siblings. Sibling gender can lead to fertility stopping behavior due to first son preference, albeit unlikely in Belgium (Clark, 2000). We find no statistically significant effects of sibling gender on performance. \\
+
+This research question is important because policies such as mentor schemes for students who do not have a same gendered sibling may lead to better academic outcomes.
+
+
+
+\subsection{Literature Review}
+Shared environmental factors are core contributors to between-family variation in cognitive achievement (Chipuer et al, 1990; Hauser \& Sewell, 1986). Sibships heavily populated with females encourages classroom excellence (Powell \& Steelman, 1990). However, other research finds the opposite effect (Butcher \& Case, 1994). More recent work shows that parental investments differ by child gender (Quadlin, 2019). Collectively, these studies show how sibling gender effects academic achievement through behavioural outcomes and resource allocation.  \\
+
+Other literature finds no effect of siblings gender on attainment, rather age spacing of siblings has a significant positive effect on attainment (Bu, 2016). \\
+
+Overall, the literature provides mixed evidence for the sibling gender effect on academic performance. We aim to contribute to this literature by focusing on the Flemish region where socioeconomic segregation in schools is very high (Belfi, 2014).
+
+\section{Data}
+Health Behaviour in School-aged Children (HBSC) is a repeated cross-sectional dataset conducted by WHO, for adolescents aged 11, 13, 15 every four years. The Belgium (Flemish) sample contains 12,884 observations. We drop only children to focus on the sibling gender effect,  leaving 10,889 observations. We create a "Single Sibling" sample for individuals with only one sibling leaving 4,481 observations. Restricting to two-child families allows us to isolate sibling gender effects without impeding additional family-size dynamics. \\
+ 
+Our identification concern is that the sibling's gender is not randomly assigned. When parents fail to achieve their desired sex ratio, they revise their fertility decisions upward (Yamaguchi \& Ferguson, 1995; Hank \& Kohler, 2000). \\
+
+Parents who have two children in this dataset, have most likely completed their fertility progression once children have reached adolescence, mitigating gender bias in sibship composition.
+  
+\subsection{Descriptive Statistics}
+
+Table 1 shows the descriptive statistics for "Single Sibling" and "All siblings" subsections of data. The total means and standard errors across both subsections are similar, providing validity for our single sibling analysis. Furthermore, the mean of "Same-sex sibling" for those with one sibling is approximately 0.5 which supports the quasi-random assignment of sibling gender assumption. \\
+
+Table 2 shows the balance check of same-sex and opposite-sex sibling for "Single Sibling" group which compares the predetermined characteristics. For both "Same-sex" and "Opposite-sex" pairs, both sex groups are roughly similar, so treatment and control groups are nearly identical, reinforcing our quasi-random assignment assumption.
+
+\section{Empirical Analysis}
+\subsection{Main Model \& Identification Strategy}
+We estimate a parsimonious ordered probit model  with the dependent variable: academic achievement \(y_i \in \{1,2,3,4\}\), the categories are: Below average, Average, Good, and Very good respectively.\\
+The baseline group are individuals without a same sex sibling. We include control variables denoted by $X_i$.
+
+\begin{align}
+P(y_i = j \mid x_i)
+  &= \Phi(\tau_j - \eta_i) - \Phi(\tau_{j-1} - \eta_i), \qquad j = 1,2,3,4, \\
+  x_i &= (\text{Same-sex}_i, X_i)'\\ 
+\eta_i &= \beta_1 \text{Same-sex}_i + \beta_4' X_i
+\end{align}
+
+ 
+\(-\infty\equiv \tau_0 < \tau_1 < \tau_2 < \tau_3\ < \tau_4 \equiv +\infty\) are threshold parameters for academic performance \\\\
+We cluster standard errors at the school level as pupils in the same institution share similar characteristics.
+\subsection{Controls}
+Our pre-determined control variables are Sex, Age, Income (proxied by affluence) and wave fixed effects. 
+\begin{itemize}
+    \item Females generally have higher academic achievement than males (Voyer \& Voyer, 2014). 
+    \item Age is likely to influence educational maturity (Dhuey \& Bedard, 2006). 
+    \item Income can influence educational value through a range of mechanisms (Brook-Gunn \& Duncan, 1997). Income affect fertility decisions in developed countries however within the "Single sibling" dataset same sex sibling will be random (Hank, 2006).
+    \item Wave fixed effects control for changes across years such as academic policies.
+\end{itemize}
+
+
+\subsection{Results Discussion}
+
+Our main results are shown in Table 3 \& 4. To test for how the effect of sibling gender differs across boys and girls, we computed the marginal effects for boys and girls at each achievement level. The conditional marginal effects are small in magnitude, as shown by Table 4, each below one percentage point, whilst being insignificant. This suggests sibling gender does not statistically influence academic performance for boys and girls.
+
+\subsection{Robustness Checks}
+
+Beyond the ordered probits, we include OLS and heterogeneity models. Table 5 indicates a slight increase in academic achievement at the age category of 13, with all other heterogeneity largely null. We also extend our analysis to multi-sibling households, only finding that girls might benefit from mixed-siblings more than boys of similar traits, as seen in Table 6. We further examine multi-sibling composition in Table 8. \\
+
+We ran a regression solely for the 2014 data which had richer data, we included the additional control of immigrant origin and heterogeneity by teacher trust. Second-generation immigrant students tend to performed below natives (Azzolini et al, 2012). Despite this, the inclusion of these variables does not change the insignificant of sibling-gender effects. Tables 7 \& 9 confirm null effects.\\
+
+Using our  largest standard clustered error of 0.0083, the Minimum detectable effect (MDE) at 10\% significance level and 80\% power was 2.32\% points, meaning our study cannot detect our current estimates with all estimate lying below the MDE. 
+
+\subsection{Limitations}
+
+We acknowledge that clustering at family levels further eliminates cultural and family environment differences across individuals to improve on the school clusters. Given that academic achievement is self-reported and prior work shows females over report, the measurement error in our dependent variable may be non-random and related to gender (Caskie et al, 2014). Perceptions of achievement may also be influenced by teacher trust (Terrier, 2020). Trust in teachers may suffer from reverse causality, reducing explanatory power. Hence, we rely on the assumption that the sibling gender is conditionally exogenous after restricting the sample.
+
+\section{Conclusion}
+
+Our findings reveal no statistically or economically meaningful effect of sibling-gender on academic performance for Flemish adolescents as all estimated marginal effects falling below the MDE.\\
+
+Flanders should therefore target reducing socioeconomic gaps as these factors more likely drive achievement. Academic achievement is also self-reported, highlighting the need for providing objective performance through transcripts, to achieve consistent reporting across groups.\\
+
+Future research could explore how birth order and resource allocation affect academic performance. \\
+
+All members of the group contributed equally.
+
+\pagebreak
+\section{Reference List}
+\begin{itemize}
+ 
+    \item Azzolini D., Schnell P., Palmer J. (2012). "Educational Achievement Gaps between Immigrant and Native Students in Two "New Immigration Countries": Italy and Spain in comparison", \textit{Ann Am Acad Pol Soc Sci}, vol. 643, no.1, pp. 46-77.
+    \item Belfi, B., Gielen, S., De Fraine, B., Verschueren, K., Meredith, C. (2014). "School-based social capital: The missing link between schools’ socioeconomic composition and collective teacher efficacy", \textit{Teaching and Teacher Education}, vol. 45, pp. 33-44.
+    \item Bu, F. (2016). "Examining sibling configuration effects on young people's educational aspiration and attainment", \textit{Advances in Life Course Research}, vol. 27, pp. 69-79.
+    \item Butcher, K. \& Case, A. (1994). "The Effect of Sibling Sex Composition on Women's Education and Earnings", \textit{The Quarterly Journal of Economics}, vol. 109, no. 3, pp. 531–563.
+    \item Brooks-Gunn J., Duncan G. (2006). "The Effects of Poverty on Children", \textit{The Future of Children}, vol.7, no.2, pp.55-71.
+    \item Caskie, G., Sutton, M., Eckhardt A. (2014). "Accuracy of Self-Reported College GPA: Gender-Moderated Differences by Achievement Level and Academic Self-Efficacy", \textit{Journal of College Student Development}, vol.55, no.4, pp.385-390.
+    \item Chipuer H., Rovine M., Plomin R. (1990). "LISREL modeling: Genetic and environmental influences on IQ revisited", \textit{Intelligence}, vol. 14, no. 1, pp. 11–29.
+    \item Clark, S. (2000). "Son Preference and Sex Composition of Children: Evidence from India", \textit{Demography}, vol. 37, no. 1, pp. 95-108.
+    \item Dhuey E., Bedard K. (2006). "The Persistence of Early Childhood Maturity: International Evidence of Long-Run Age Effects" .\textit{Quarterly Journal of Economics}, vol. 121, no.4, pp.1437-1472.
+    \item Hank K., Kohler H. (2000). "Gender Preferences for Children in Europe: Empirical Results from 17 FFS Countries", \textit{Demographic Research}, vol.2, no.1.
+    \item Hank K. (2006). "Parental Gender Preferences and Reproductive Behaviour: A Review of the Recent Literature", \textit{Journal of Biological Science}, vol.39, no.5, pp.759-767.
+    \item Hauser, R. \& Sewell, W. (1986). "Family Effects in Simple Models of Education, Occupational Status, and Earnings: Findings from the Wisconsin and Kalamazoo Studies", \textit{Journal of Labour Economics}, vol. 4, no. 3, pp. 83-115.
+    \item McHale S., Updegraff K., Whiteman S. (2014). "Sibling Relationships and Influences in Childhood and Adolescence", \textit{Journal of Marriage and Family}, vol. 74, no. 5, pp. 913-930.
+    \item Powell, B. \& Steelman L. (1990). "Beyond Sibship Size: Sibling Density, Sex Composition and Educational Outcomes", \textit{Social Forces}, vol. 69, no. 1, pp. 181.
+    \item Quadlin, N. (2019). "Sibling Achievement, Sibling Gender, and Beliefs about Parental Investment: Evidence from a National Survey Experiment", \textit{Social forces}, vol. 97, no. 4, pp. 1603–1630.
+    \item Terrier, C. (2020). "Boys lag behind: How teachers’ gender biases affect student achievement", \textit{Economics of Education Review 77}, vol, 77, pp. 1-20.
+    \item University of Bergen, Department of Health Promotion and Development (2006, 2010, 2014). \textit{HBSC: Health Behaviour in School-aged Children} 
+    \item Voyer, D., Voyer, S. D. (2014). "Gender differences in scholastic achievement: A meta-analysis", \textit{Psychological Bulletin}, vol. 140, no. 4,pp. 1174–1204.
+    \item Yamaguchi, K., Ferguson, L. (1995). "The Stopping and Spacing of Childbirths and Their Birth-History Predictors: Rational-Choice Theory and Event-History Analysis", \textit{American Sociological Review}, vol. 60, no.2, pp. 272-298.
+
+\end{itemize}
+
+
+\clearpage
+\begin{landscape}
+\section{Appendix}
+
+\begin{table}[htpb]\centering
+\caption{Baseline Characteristics by Sibling Structure}
+\label{tab:descriptives}
+\begin{footnotesize}
+\begin{tabular}{l*{7}{c}} \toprule
+ & \multicolumn{3}{c}{Panel A. One-sibling sample} &   \multicolumn{4}{c}{Panel B. Multi-sibling sample (composition)} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-8}
+ & Total & Same-sex & Opposite-sex & Total & Only same-sex & Mixed siblings & Only opposite-sex \\
+\midrule
+Academic achievement (1-4) & 2.75 (0.83) & 2.74 (0.83) & 2.75 (0.82) & 2.64 (0.85) & 2.63 (0.85) & 2.65 (0.85) & 2.62 (0.83) \\
+Same-sex sibling & 0.49 (0.50) & 1.00 (0.00) & 0.00 (0.00) & 0.81 (0.39) & 1.00 (0.00) & 1.00 (0.00) & 0.00 (0.00) \\
+Female & 0.49 (0.50) & 0.48 (0.50) & 0.49 (0.50) & 0.48 (0.50) & 0.41 (0.49) & 0.49 (0.50) & 0.52 (0.50) \\
+Age (years, 11/13/15 groups) & 13.02 (1.67) & 13.01 (1.67) & 13.04 (1.66) & 13.03 (1.66) & 13.08 (1.62) & 13.03 (1.68) & 12.99 (1.62) \\
+Family affluence (1-5) & 2.84 (0.67) & 2.85 (0.67) & 2.83 (0.67) & 2.87 (0.72) & 2.85 (0.69) & 2.88 (0.73) & 2.87 (0.70) \\
+Mother in main home (recoded) & 1.03 (0.16) & 1.02 (0.15) & 1.03 (0.17) & 1.05 (0.22) & 1.06 (0.23) & 1.05 (0.21) & 1.05 (0.22) \\
+Father in main home (recoded) & 1.10 (0.30) & 1.09 (0.29) & 1.11 (0.32) & 1.19 (0.39) & 1.17 (0.37) & 1.20 (0.40) & 1.19 (0.39) \\
+Number of siblings & 1.00 (0.00) & 1.00 (0.00) & 1.00 (0.00) & 3.20 (2.11) & 2.44 (0.98) & 3.67 (2.46) & 2.41 (0.94) \\
+\midrule
+Observations & 4481 & 2212 & 2269 & 6408 & 1268 & 3945 & 1195 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{0.95\textwidth}
+\footnotesize
+\emph{Notes:} Entries are means with standard deviations in parentheses.
+Panel A restricted to children with exactly one sibling in the Flemish Belgium HBSC (2006, 2010, 2014).
+Panel B restricted to children with two or more siblings in the analysis sample.
+In Panel B: “Only same-sex” denotes children whose siblings are all the same sex as the child; 
+“Mixed siblings” denotes at least one brother and at least one sister; 
+“Only opposite-sex” denotes all siblings of the opposite sex. 
+Estimates are weighted using HBSC sampling weights.
+\end{minipage}
+\end{footnotesize}
+\end{table}
+\end{landscape}
+
+
+\begin{table}[htbp]\centering
+\caption{Baseline Characteristics by Sibling Gender}
+\label{tab:balance}
+\begin{footnotesize}
+
+% (optional) slightly tighter columns
+\setlength{\tabcolsep}{4pt}
+
+% the table itself
+\begin{tabular*}{0.85\textwidth}{@{\extracolsep{\fill}}lccc}
+\toprule
+                    & Same-sex (N=2212) & Opposite-sex (N=2269) & Difference \\
+\midrule
+Female              & 0.48 & 0.49 & 0.01 (0.01) \\
+Age                 & 13.48 & 13.51 & 0.03 (0.05) \\
+Family affluence (1–5) & 2.85 & 2.83 & -0.02 (0.02) \\
+Mother in main home (recoded) & 1.02 & 1.03 & 0.00 (0.00) \\
+Father in main home (recoded) & 1.09 & 1.11 & 0.02 (0.01) \\
+\bottomrule
+\end{tabular*}
+
+\vspace{0.3em}
+\begin{minipage}{0.85\textwidth}
+\footnotesize
+\setlength{\parindent}{0pt}
+\raggedright
+Sample restricted to children with exactly one sibling in the Flemish Belgium
+HBSC (2006, 2010, 2014); total estimation sample size is $N=4481$.\\
+Entries are means for the same-sex sibling group (column 1) and the
+opposite-sex sibling group (column 2). Column 3 reports the difference
+in means (same-sex minus opposite-sex) with standard errors in parentheses.\\
+Variables: female $=1$ if the respondent is female; age $=$ respondent's
+age in years; welloff $=$ Family Affluence Scale (higher values indicate
+higher family socioeconomic status); motherhome1 and fatherhome1 $=1$ if
+the mother/father lives in the same home.\\
+The covariates reported in this table correspond to the predetermined
+controls included in the baseline regression specification.\\
+Joint test of covariate balance from regression of same\_sex on all
+covariates: $F(9,191)=0.51$; $p$-value $=0.865$.
+\end{minipage}
+
+\end{footnotesize}
+\end{table}
+
+
+
+\begin{table}[htbp]\centering
+\caption{Effect of Same-Sex Sibling on Academic Achievement}
+\label{tab:main}
+\begin{footnotesize}
+
+\begin{tabular}{l*{4}{c}}
+\toprule
+                &\multicolumn{1}{c}{O.Probit}&\multicolumn{1}{c}{O.Probit}&\multicolumn{1}{c}{O.Probit}&\multicolumn{1}{c}{OLS}\\
+\midrule
+main            &                  &                  &                  &                  \\
+Same-sex sibling&   -0.015         &   -0.013         &   -0.013         &   -0.011         \\
+                &  (0.034)         &  (0.032)         &  (0.032)         &  (0.024)         \\
+\midrule
+Observations    &    4,461         &    4,461         &    4,461         &    4,461         \\
+Log likelihood  &-5399.339         &-5258.008         &-5257.087         &-5340.919         \\
+Pseudo R$^2$    &    0.000         &    0.026         &    0.026         &                  \\
+R$^2$           &                  &                  &                  &    0.062         \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.35em}
+\begin{minipage}{0.9\textwidth}
+\footnotesize
+\setlength{\parindent}{0pt}
+\raggedright
+Standard errors in parentheses.\\[0.25em]
+Columns (1)--(3) estimate ordered probit models of the four–category academic
+achievement variable (1 = below average, 4 = very good).\\
+Coefficients represent effects on the latent achievement index underlying the
+observed categories; negative values indicate lower predicted achievement.\\
+Column (1) includes no additional controls; Column (2) adds predetermined
+controls (female, age group, family affluence); Column (3) further adds wave
+fixed effects. Column (4) reports the OLS analogue for ease of interpretation.\\
+All models use survey weights and cluster standard errors at the school level.\\[0.25em]
+\emph{*} $p<0.10$, \emph{**} $p<0.05$, \emph{***} $p<0.01$.
+\end{minipage}
+
+\end{footnotesize}
+\end{table}
+
+
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Marginal Effects of Same-Sex Sibling on Achievement Levels\label{tab:margins}}
+\begin{tabular}{l*{4}{c}}
+\toprule
+                &\multicolumn{1}{c}{Below avg}&\multicolumn{1}{c}{Average}&\multicolumn{1}{c}{Good}&\multicolumn{1}{c}{Very good}\\
+                &     b/se         &     b/se         &     b/se         &     b/se         \\
+\midrule
+Same-sex sibling&   0.0016         &   0.0034         &  -0.0014         &  -0.0035         \\
+                & (0.0038)         & (0.0080)         & (0.0035)         & (0.0083)         \\
+\midrule
+Observations    &    4,461         &    4,461         &    4,461         &    4,461         \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize Marginal effects from ordered probit (Table \ref{tab:main}, column 3).}\\
+\multicolumn{5}{l}{\footnotesize Shows change in probability of each achievement level from having a same-sex sibling.}\\
+\multicolumn{5}{l}{\footnotesize Standard errors in parentheses, clustered at school level.}\\
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Heterogeneity in Same-Sex Sibling Effect\label{tab:heterogeneity}}
+\begin{tabular}{l*{3}{c}}
+\toprule
+                &\multicolumn{1}{c}{By sex}&\multicolumn{1}{c}{By age}&\multicolumn{1}{c}{By affluence}\\
+\midrule
+Academic achievement (1-4)&                  &                  &                  \\
+Same-sex sibling&   -0.053         &   -0.066         &    0.023         \\
+                &  (0.050)         &  (0.053)         &  (0.146)         \\
+Same-sex × Female&    0.082         &                  &                  \\
+                &  (0.069)         &                  &                  \\
+Same-sex × Age 13&                  &    0.169\sym{**} &                  \\
+                &                  &  (0.073)         &                  \\
+Same-sex × Age 15&                  &    0.002         &                  \\
+                &                  &  (0.075)         &                  \\
+Same-sex × Affluence&                  &                  &   -0.013         \\
+                &                  &                  &  (0.050)         \\
+\midrule
+Observations    &    4,461         &    4,461         &    4,461         \\
+Log likelihood  &-5256.288         &-5254.230         &-5258.932         \\
+Pseudo R^2      &    0.027         &    0.027         &    0.026         \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{4}{l}{\footnotesize Ordered probit with interactions. All models control for child sex, age, wave, and affluence.}\\
+\multicolumn{4}{l}{\footnotesize Reference: Male (col 1), Age 11 (col 2). Column (3) uses linear interaction in affluence.}\\
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses, clustered at school level.}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}
+
+
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Sibling Composition Effects in Multi-Sibling Families\label{tab:composition}}
+\begin{tabular}{l*{2}{c}}
+\toprule
+                &\multicolumn{1}{c}{O.Probit}&\multicolumn{1}{c}{OLS}\\
+\midrule
+main            &                  &                  \\
+Boy: mixed siblings&   -0.004         &   -0.005         \\
+                &  (0.047)         &  (0.037)         \\
+Girl: mixed siblings&    0.105\sym{***}&    0.080\sym{**} \\
+                &  (0.040)         &  (0.031)         \\
+Only same-sex siblings&    0.038         &    0.028         \\
+                &  (0.047)         &  (0.036)         \\
+\midrule
+Observations    &    6,386         &    6,386         \\
+Log likelihood  &-7740.191         &-7860.515         \\
+Pseudo R^2      &    0.019         &                  \\
+R^2             &                  &    0.045         \\
+\bottomrule
+\multicolumn{3}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{3}{l}{\footnotesize Sample: children with 2+ siblings. Reference: only opposite-sex siblings.}\\
+\multicolumn{3}{l}{\footnotesize Boy: mixed = boy with brother(s) and sister(s). Girl: mixed = girl with brother(s) and sister(s).}\\
+\multicolumn{3}{l}{\footnotesize Only same-sex = all siblings same sex as respondent.}\\
+\multicolumn{3}{l}{\footnotesize Controls: child sex, age group, wave, family affluence. SE clustered at school level.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{2014 Wave: Immigrant Origin and Teacher Trust Mechanisms\label{tab:wave2014}}
+\begin{tabular}{l*{3}{c}}
+\toprule
+                &\multicolumn{1}{c}{O.Probit}&\multicolumn{1}{c}{OLS}&\multicolumn{1}{c}{By trust}\\
+\midrule
+main            &                  &                  &                  \\
+Same-sex sibling&   -0.048         &   -0.035         &   -0.036         \\
+                &  (0.053)         &  (0.039)         &  (0.065)         \\
+Immigrant origin&   -0.092         &   -0.071         &   -0.046         \\
+                &  (0.074)         &  (0.055)         &  (0.074)         \\
+Same-sex × Medium trust&                  &                  &    0.053         \\
+                &                  &                  &  (0.091)         \\
+Same-sex × High trust&                  &                  &   -0.204         \\
+                &                  &                  &  (0.219)         \\
+\midrule
+Observations    &    1,492         &    1,492         &    1,483         \\
+Log likelihood  &-1755.583         &-1789.395         &-1711.115         \\
+Pseudo R^2      &    0.039         &                  &    0.057         \\
+R^2             &                  &    0.091         &                  \\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{4}{l}{\footnotesize Sample: 2014 wave, single-sibling families only.}\\
+\multicolumn{4}{l}{\footnotesize Immigrant origin: at least one parent foreign-born. Teacher trust: 3-level (low, medium, high; ref: low).}\\
+\multicolumn{4}{l}{\footnotesize Controls: child sex, age, family affluence. SE clustered at school level.}\\
+\multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}
+
+
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Composition Effects by Age\label{tab:comp\_age}}
+\begin{tabular}{l*{1}{c}}
+\toprule
+                &\multicolumn{1}{c}{Academic achievement (1-4)}\\
+\midrule
+Academic achievement (1-4)&                  \\
+Boy: mixed siblings&    0.065         \\
+                &  (0.071)         \\
+Girl: mixed siblings&    0.113\sym{**} \\
+                &  (0.054)         \\
+Age group ~13.5 $\times$ Boy: mixed siblings&   -0.049         \\
+                &  (0.089)         \\
+Age group ~15.5 $\times$ Boy: mixed siblings&   -0.145\sym{*}  \\
+                &  (0.085)         \\
+Age group ~13.5 $\times$ Girl: mixed siblings&   -0.018         \\
+                &  (0.076)         \\
+Age group ~15.5 $\times$ Girl: mixed siblings&   -0.008         \\
+                &  (0.068)         \\
+Only same-sex siblings&    0.037         \\
+                &  (0.047)         \\
+\midrule
+Observations    &    6,386         \\
+Log likelihood  &-7737.949         \\
+Pseudo R^2      &    0.019         \\
+\bottomrule
+\multicolumn{2}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{2}{l}{\footnotesize Multi-sibling sample. Interactions with age groups. Reference age: 11.}\\
+\multicolumn{2}{l}{\footnotesize Standard errors clustered at school level.}\\
+\multicolumn{2}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}
+
+
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{2014 Full Sample Robustness Check\label{tab:2014full}}
+\begin{tabular}{l*{2}{c}}
+\toprule
+                &\multicolumn{1}{c}{O.Probit}&\multicolumn{1}{c}{OLS}\\
+\midrule
+main            &                  &                  \\
+Same-sex sibling&   -0.069\sym{*}  &   -0.052         \\
+                &  (0.041)         &  (0.031)         \\
+Immigrant origin&   -0.085         &   -0.065         \\
+                &  (0.058)         &  (0.044)         \\
+\midrule
+Observations    &    3,634         &    3,634         \\
+Log likelihood  &-4341.712         &-4416.075         \\
+Pseudo R^2      &    0.029         &                  \\
+R^2             &                  &    0.070         \\
+\bottomrule
+\multicolumn{3}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{3}{l}{\footnotesize Sample: All families with 1+ siblings (2014 wave only).}\\
+\multicolumn{3}{l}{\footnotesize Results subject to composition bias from parental fertility decisions.}\\
+\multicolumn{3}{l}{\footnotesize Main analysis (Table \ref{tab:wave2014}) uses single-sibling sample.}\\
+\multicolumn{3}{l}{\footnotesize Controls: child sex, age, family affluence. SE clustered at school.}\\
+\multicolumn{3}{l}{\footnotesize \sym{*} \(p<0.10\), \sym{**} \(p<0.05\), \sym{***} \(p<0.01\)}\\
+\end{tabular}
+\end{table}
+
+
+
+
+\end{document}
