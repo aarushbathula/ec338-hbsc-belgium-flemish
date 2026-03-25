@@ -6,9 +6,12 @@ version 18
 clear all
 set more off
 
-* Assumes PROJ is defined in master.do.
-* If running standalone, uncomment and set:
-* global PROJ "/Users/aarushbathula/Developer/ec338-hbsc-belgium-flemish"
+capture confirm global PROJ
+if _rc {
+    global PROJ "`c(pwd)'"
+}
+
+do "$PROJ/code/00_setup.do"
 
 global FINAL "$PROJ/data/final"
 global TABLES "$PROJ/output/tables"

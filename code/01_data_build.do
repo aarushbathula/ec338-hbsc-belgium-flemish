@@ -7,12 +7,14 @@ clear all
 set more off
 set varabbrev off
 
-* Paths inherited from master.do:
-cd "$PROJ"
+capture confirm global PROJ
+if _rc {
+    global PROJ "`c(pwd)'"
+}
 
-global RAW    "$PROJ/data/raw"
-global INT    "$PROJ/data/interim"
-global FINAL  "$PROJ/data/final"
+do "$PROJ/code/00_setup.do"
+
+cd "$PROJ"
 
 foreach dir in INT FINAL {
     capture mkdir "$`dir'"

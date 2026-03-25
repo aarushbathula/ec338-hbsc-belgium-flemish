@@ -11,7 +11,11 @@ set varabbrev off
 
 * 0. Project paths
 *---------------------------------------------------
-global PROJ   "/Users/Aarushbathula/Developer/ec338-hbsc-belgium-flemish"
+capture confirm global PROJ
+if _rc {
+    global PROJ "`c(pwd)'"
+}
+
 cd "$PROJ"
 
 global RAW    "$PROJ/data/raw"

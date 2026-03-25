@@ -10,7 +10,11 @@ set varabbrev off
 
 * 0. Project paths
 *---------------------------------------------------
-global PROJ   "/Users/Aarushbathula/Developer/ec338-hbsc-belgium-flemish"
+capture confirm global PROJ
+if _rc {
+    global PROJ "`c(pwd)'"
+}
+
 cd "$PROJ"
 
 global RAW    "$PROJ/data/raw"
@@ -561,4 +565,3 @@ esttab using "$TABLES/2014_fullsample_trust_het.tex", replace ///
     title("Teacher Trust Heterogeneity: Full 2014 Sibling Sample (Robustness)")
 
 log close
-

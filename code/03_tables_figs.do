@@ -8,24 +8,14 @@ clear all
 set more off
 set varabbrev off
 
-* If running via master.do, PROJ is already defined.
-* If running standalone, set PROJ here:
 capture confirm global PROJ
 if _rc {
-    global PROJ "/Users/aarushbathula/Developer/ec338-hbsc-belgium-flemish"
+    global PROJ "`c(pwd)'"
 }
+
+do "$PROJ/code/00_setup.do"
 
 cd "$PROJ"
-
-global RAW    "$PROJ/data/raw"
-global INT    "$PROJ/data/interim"
-global FINAL  "$PROJ/data/final"
-global LOGS   "$PROJ/output/logs"
-global TABLES "$PROJ/output/tables"
-
-foreach dir in LOGS TABLES {
-    capture mkdir "$`dir'"
-}
 
 * We use estout quite extensively for tables:
 * ssc install estout, replace

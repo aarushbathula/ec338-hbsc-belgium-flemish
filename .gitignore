@@ -4,6 +4,16 @@
 *.dta
 *.gph
 
+# Preserve local folder structure
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/final/.gitkeep
+!data/README.md
+!output/tables/.gitkeep
+!output/figures/.gitkeep
+!output/logs/.gitkeep
+!output/README.md
+
 # --- Output ---
 output/tables/*
 output/figures/*
@@ -13,6 +23,7 @@ output/logs/*
 !output/tables/.gitkeep
 !output/figures/.gitkeep
 !output/logs/.gitkeep
+!output/README.md
 
 # --- LaTeX ---
 *.aux
@@ -30,6 +41,10 @@ Thumbs.db
 *.tmp
 *.swp
 *.bak
+.Rhistory
+.RData
+.Rproj.user/
+.Rproj
 
 # --- RStudio / Quarto (if ever added) ---
 .Rproj.user/
