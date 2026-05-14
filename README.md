@@ -29,7 +29,7 @@ do code/master.do
 - `data/final/`: final pooled analysis dataset
 - `paper/`: manuscript source and Overleaf assets
 
-See [data/README.md](/Users/aarushbathula/Developer/modules/ec338-hbsc-belgium-flemish/data/README.md) and [output/README.md](/Users/aarushbathula/Developer/modules/ec338-hbsc-belgium-flemish/output/README.md) for the local file conventions.
+See [data/README.md](data/README.md) and [output/README.md](output/README.md) for the local file conventions.
 
 ## Software and Dependencies
 
